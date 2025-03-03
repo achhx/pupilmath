@@ -3,13 +3,12 @@
 <head>
     <title>桃桃朵朵学数学</title>
     <style>
-        .container { width: 0 auto; margin: 0 auto; padding: 20px }
+        .container {margin: 20px; padding: 0 15px;}
         .question { font-size: 48px; margin: 20px 0 }
         .explanation { 
-            max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease-out;
-            background: #f8f9fa;
+
+			margin: 20px;
             padding: 0 15px;
         }
         .step { margin: 10px 0; opacity: 0; transform: translateY(20px); }
@@ -24,17 +23,21 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <select id="level" style="width:400px;height:50px;font-size:32px">
-            <option value="1">初级（加减）</option>
-            <option value="2">中级（乘除）</option>
-            <option value="3">高级（混合运算）</option>
+    <div class="container" style="text-align:center">
+        <select id="level" style="width:400px;height:40px;font-size:28px" onchange="showQuestion()">
+            <option value="1">加法运算  ➕</option>
+            <option value="2">减法运算  ➖</option>
+            <option value="3">加减运算  ➕➖</option>
+            <option value="4">乘法运算  ❌</option>
+            <option value="5">除法运算  ➗</option>
+            <option value="6">乘除运算  ✖️➗</option>
+            <option value="7">混合运算  ➕➖❌➗</option>
         </select>
         <div id="questionArea"></div>
-        <input type="number" step="0.01" id="answer" style="width:400px;height:50px;font-size:32px">
+        <input type="number" step="0.01" id="answer" style="width:390px;height:40px;font-size:28px;margin: 20px; padding: 5px" onclick="this.value='';">
 		<br>
-        <button onclick="checkAnswer()" style="width:400px;height:50px;font-size:32px">提交答案</button>
-        <div id="feedback" style="width:400px;height:50px;font-size:32px"></div>
+        <button onclick="checkAnswer()" style="width:400px;height:40px;font-size:28px">提交答案</button>
+        <div id="feedback" style="width:400px;height:40px;font-size:28px;width: 50%; margin: auto;"></div>
     </div>
 
 <script>
@@ -42,13 +45,21 @@ let currentQuestion = null;
 
 function generateQuestion(level) {
     let ops = [];
-    if(level >= 1) ops.push('+',  '-');
-    if(level >= 2) ops.push('×',  '÷');
-    if(level >= 3) ops = ['+', '-', '×', '÷'];
+    if(level == 1) ops.push('+');
+    if(level == 2) ops.push('-');
+    if(level == 3) ops.push('+',  '-');
+    if(level == 4) ops.push('×');
+    if(level == 5) ops.push('÷');
+    if(level == 6) ops.push('×',  '÷');
+    if(level == 7) ops = ['+', '-', '×', '÷'];
     
-    const num1 = Math.floor(Math.random()*10)+1; 
-    const num2 = Math.floor(Math.random()*10)+1; 
+    let num1 = Math.floor(Math.random()*100)+1; 
+    let num2 = Math.floor(Math.random()*100)+1;
+    let tmpVar=num1;
     const op = ops[Math.floor(Math.random()*ops.length)];
+	if(op == '-') {num1=Math.max(tmpVar,num2);num2=Math.min(tmpVar,num2);}
+	if(op == '×') {num1=num1%20;num2=num2%20;}
+	if(op == '÷') {num1=num1%20;num2=num2%10;num1=num1*num2;}
     
     return {
         expression: `${num1} ${op} ${num2}`,
@@ -60,7 +71,7 @@ function generateQuestion(level) {
 function calculate(a, op, b) {
     switch(op) {
         case '+': return a + b;
-        case '-': return a > b ? a - b : b - a;
+        case '-': return a - b;
         case '×': return a * b;
         case '÷': return (a / b).toFixed(2);
     }
@@ -87,6 +98,7 @@ function buildSteps(a, op, b) {
 }
 
 function showQuestion() {
+	document.getElementById('answer').value = "";
     const level = document.getElementById('level').value; 
     currentQuestion = generateQuestion(parseInt(level));
     document.getElementById('questionArea').innerHTML  = `
@@ -100,11 +112,11 @@ function checkAnswer() {
     const feedback = document.getElementById('feedback'); 
     
     if(Math.abs(userAnswer  - correctAnswer) < 0.01) {
-        feedback.innerHTML  = "<p style='color:green'>✅ 回答正确！</p>";
+        feedback.innerHTML  = "<p style='color:green' style='text-align:center'>✅ 回答正确！</p>";
     } else {
         feedback.innerHTML  = `
-            <p style='color:red'>❌ 正确答案是 ${correctAnswer}</p>
-            <div class="explanation">
+            <p style='color:red;text-align:center'>❌ 正确答案是 ${correctAnswer}而不是${userAnswer}</p>
+            <div class="explanation" style="text-align:center">
                 ${currentQuestion.steps.map((s,i)  => 
                     `<p class="step" style="--i:${i}">${s}</p>`
                 ).join('')}
