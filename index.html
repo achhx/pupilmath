@@ -3,8 +3,8 @@
 <head>
     <title>四则运算练习</title>
     <style>
-        .container { max-width: 800px; margin: 20px auto; padding: 20px }
-        .question { font-size: 24px; margin: 20px 0 }
+        .container { width: 0 auto; margin: 0 auto; padding: 20px }
+        .question { font-size: 48px; margin: 20px 0 }
         .explanation { 
             max-height: 0;
             overflow: hidden;
@@ -25,15 +25,16 @@
 </head>
 <body>
     <div class="container">
-        <select id="level">
+        <select id="level" style="width:400px;height:50px;font-size:32px">
             <option value="1">初级（加减）</option>
             <option value="2">中级（乘除）</option>
             <option value="3">高级（混合运算）</option>
         </select>
         <div id="questionArea"></div>
-        <input type="number" step="0.01" id="answer">
-        <button onclick="checkAnswer()">提交答案</button>
-        <div id="feedback"></div>
+        <input type="number" step="0.01" id="answer" style="width:400px;height:50px;font-size:32px">
+		<br>
+        <button onclick="checkAnswer()" style="width:400px;height:50px;font-size:32px">提交答案</button>
+        <div id="feedback" style="width:400px;height:50px;font-size:32px"></div>
     </div>
 
 <script>
